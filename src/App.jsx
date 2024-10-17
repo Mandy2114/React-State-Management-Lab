@@ -1,10 +1,8 @@
 import { useState } from "react";
 import './App.css'
 
-
-
 const App = () => {
-  const [zombieFighters, setzombieFighters] = useState([
+  const [zombieFighters, setZombieFighters] = useState([
     {
       name: 'Survivor',
       price: 12,
@@ -77,11 +75,64 @@ const App = () => {
     },
   ]);
   
-  const [team] = useState([]); 
-  const [money] = useState(100);
+  const [team, setTeam] = useState([]); 
+  const [money, setMoney] = useState(100);
+  const [totalStrength, setTotalStrength] = useState(0);
+  const [totalAgility, setTotalAgility] = useState(0);
 
+  const calculateTotalStrength = (team) => {
+    return team.reduce((acc, fighter) => acc + fighter.strenght, 0);
+  }
+  
+  const calculateTotalAgility = (team) => {
+    return team.reduce((acc, fighter) => acc, + fighter.agility, 0);
+  }
 
+  const handleAddFighter = (fighter) => {
+    if (money >= fighter.price) {
+      const newTeam = [...team, fighter];
+      setTeam(newTeam);
 
+      setMoney(money - fighter.price);
+      setTotalStrength(calculateTotalStrength(newTeam));
+      setTotalAgility(calculateTotalAgility(newTeam));
+    } else {
+      console.log("Not enough money")
+    }
+  };
+
+  return (
+    <>
+      <div className="app">
+        <h1>Zombie Fighters</h1>
+        <h2>Current Money: ${money}</h2>
+        <ul className="fighter-list">
+          <h2>Fighters</h2>
+          {zombieFighters.map((fighter, index) => (
+            <li
+              key={index}
+              className="fighter-item">
+              <img
+                src={fighter.img}
+                alt={fighter.name}
+              />
+              <p>{fighter.name}</p>
+              <p>Price: {fighter.price}</p>
+              <p>Strength: {fighter.strength}</p>
+              <p>Agility: {fighter.agility}</p>
+              <button onClick={() => handleAddFighter(fighter)}>Add to Team</button>
+            </li>
+          ))}
+        </ul>
+        <h2>Your Team</h2>
+        <ul>
+          {team.map((member) => (
+            <li key={member.id}>{member.name}</li>
+          ))}
+        </ul>
+      </div>
+    </>   
+  );
 }
 
 export default App;
